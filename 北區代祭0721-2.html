@@ -1180,6 +1180,14 @@
         </div>
     </div>
 
+    <!-- Modal: Photo Lightbox (點擊影音回報照片放大預覽) -->
+    <div id="photo-lightbox-modal" class="hidden fixed inset-0 bg-black/85 flex items-center justify-center p-4 z-[60]" onclick="closePhotoLightbox()">
+        <img id="photo-lightbox-img" src="" class="max-w-full max-h-full rounded-lg shadow-2xl" onclick="event.stopPropagation()">
+        <button onclick="closePhotoLightbox()" class="absolute top-4 right-4 text-white text-2xl hover:text-accent-gold transition">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </button>
+    </div>
+
     <!-- Modal: Import Order -->
     <div id="import-order-modal" class="hidden fixed inset-0 bg-brand-900/60 backdrop-blur-sm flex items-start justify-center p-4 z-50 overflow-y-auto">
         <div class="bg-accent-stone rounded-2xl border border-brand-200 max-w-lg w-full p-6 shadow-2xl relative space-y-4 animate-fade-in my-8">
@@ -4486,14 +4494,14 @@
                 document.getElementById('report-video-placeholder').classList.remove('hidden');
 
                 const photosGrid = document.getElementById('report-photos-grid');
-                photosGrid.innerHTML = (o.mediaReport.photos || []).map(p => `
+                photosGrid.innerHTML = (o.mediaReport.photos || []).map((p, idx) => `
                     <div class="relative rounded-lg overflow-hidden border border-stone-200 bg-stone-100 group">
-                        <img src="${p.url}" class="w-full h-full object-cover aspect-[4/3]" onerror="this.src='https://placehold.co/300x300/38503f/faf6f0?text=Photo'">
+                        <img src="${p.url}" class="w-full h-full object-cover aspect-[4/3] cursor-pointer" onclick="previewReportPhoto(${idx})" onerror="this.src='https://placehold.co/300x300/38503f/faf6f0?text=Photo'">
                         <div class="absolute inset-x-0 bottom-0 bg-black/55 text-white text-[10px] px-2 py-1 flex items-center justify-between gap-2">
                             <span class="truncate">${p.name}</span>
-                            <a href="${p.url}" download="${p.name}" class="shrink-0 text-white hover:text-accent-gold transition" title="下載此照片">
+                            <button onclick="downloadReportPhoto(${idx})" class="shrink-0 text-white hover:text-accent-gold transition" title="下載此照片">
                                 <i class="fa-solid fa-download"></i>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 `).join('') || `<p class="text-[10px] text-stone-400 italic col-span-full text-center py-4">尚無照片</p>`;
@@ -4514,6 +4522,46 @@
             document.getElementById('report-video-placeholder').classList.remove('hidden');
             document.getElementById('report-modal').classList.add('hidden');
             currentReportOrderId = null;
+        }
+
+        function previewReportPhoto(idx) {
+            const o = state.orders.find(ord => ord.id === currentReportOrderId);
+            const photo = o && o.mediaReport && o.mediaReport.photos && o.mediaReport.photos[idx];
+            if (!photo) return;
+            document.getElementById('photo-lightbox-img').src = photo.url;
+            document.getElementById('photo-lightbox-modal').classList.remove('hidden');
+        }
+
+        function closePhotoLightbox() {
+            document.getElementById('photo-lightbox-modal').classList.add('hidden');
+            document.getElementById('photo-lightbox-img').src = '';
+        }
+
+        // 跨網域的圖片/影片網址（如 Supabase Storage 的公開 URL）瀏覽器會忽略 <a download>，
+        // 直接開新分頁而不是下載。要真的觸發下載，必須先把檔案抓成 blob，再用 blob: URL 下載。
+        async function downloadMediaFile(url, filename) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('無法取得檔案');
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename || 'download';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(blobUrl);
+            } catch (err) {
+                showToast(`下載失敗：${err.message || err}`, "error");
+            }
+        }
+
+        function downloadReportPhoto(idx) {
+            const o = state.orders.find(ord => ord.id === currentReportOrderId);
+            const photo = o && o.mediaReport && o.mediaReport.photos && o.mediaReport.photos[idx];
+            if (!photo) return;
+            downloadMediaFile(photo.url, photo.name || `photo-${idx + 1}.jpg`);
         }
 
         // Reveals and plays the <video> element in place of its placeholder thumbnail.
