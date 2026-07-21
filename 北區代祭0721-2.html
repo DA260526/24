@@ -1529,8 +1529,15 @@
 
         const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // System Current Time configuration: July 20, 2026
-        const SYSTEM_TODAY = new Date("2026-07-20");
+        // 回傳「台北當地」的今天日期（時分秒歸零），不管訪客瀏覽器在哪個時區都一致。
+        // 台北是 UTC+8 且沒有日光節約時間，所以直接用 UTC 時間位移 8 小時換算即可。
+        function getTaipeiToday() {
+            const now = new Date();
+            const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+            const taipeiMs = utcMs + 8 * 60 * 60 * 1000;
+            const t = new Date(taipeiMs);
+            return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+        }
 
         // Chinese Lunar Calendar Year boundaries and Leap month configuration mapping (2025-2028)
         const LUNAR_MONTHS = ["正月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "臘月"];
@@ -2183,10 +2190,12 @@
                 populateAncestorSelect();
                 updateOffererFields();
                 syncBookingSummary();
-                // Sync Taipei Clock label
+                // Sync Taipei Clock label to the real current date (Asia/Taipei)
                 const clockLabel = document.getElementById('live-taipei-clock-label');
                 if (clockLabel) {
-                    clockLabel.textContent = `臺北標準時間: 2026年7月20日 星期一`;
+                    const today = getTaipeiToday();
+                    const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+                    clockLabel.textContent = `臺北標準時間: ${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日 星期${weekDays[today.getDay()]}`;
                 }
             } else if (tabId === 'admin' && state.isLoggedIn) {
                 switchAdminPanel('orders');
@@ -2684,7 +2693,7 @@
             const fData = FESTIVALS.find(f => f.name === festName);
             if (!fData) return null;
 
-            const minAllowedDate = new Date(SYSTEM_TODAY);
+            const minAllowedDate = getTaipeiToday();
             minAllowedDate.setDate(minAllowedDate.getDate() + 7);
 
             const years = Object.keys(fData.dates).sort();
@@ -2810,8 +2819,10 @@
             }
         }
 
-        let currentCalYear = 2026;
-        let currentCalMonth = 6; // Starts on July
+        // 虛擬日曆預設開啟「今天」所在的年月（限制在目前有農曆/節日資料的 2025-2028 年）
+        const _todayForCalendar = getTaipeiToday();
+        let currentCalYear = Math.min(2028, Math.max(2025, _todayForCalendar.getFullYear()));
+        let currentCalMonth = currentCalYear === _todayForCalendar.getFullYear() ? _todayForCalendar.getMonth() : 0;
 
         function renderVirtualCalendarDays() {
             const grid = document.getElementById('calendar-days-grid');
@@ -2827,7 +2838,7 @@
             }
 
             // Allowed range: 7 days after today (2026-07-20) -> July 27, 2026
-            const minAllowedDate = new Date(SYSTEM_TODAY);
+            const minAllowedDate = getTaipeiToday();
             minAllowedDate.setDate(minAllowedDate.getDate() + 7);
 
             for (let day = 1; day <= totalDays; day++) {
