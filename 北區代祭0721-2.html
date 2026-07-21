@@ -229,21 +229,21 @@
                 <div class="absolute -left-20 -top-20 w-80 h-80 bg-accent-gold/5 rounded-full blur-3xl"></div>
                 
                 <div class="max-w-2xl space-y-6 relative z-10">
-                    <span class="bg-accent-gold/20 text-accent-gold border border-accent-gold/30 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase">
+                    <span id="lobby-hero_badge" class="bg-accent-gold/20 text-accent-gold border border-accent-gold/30 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase">
                         北區代辦祭祀首選 · 整合合法公私立寶塔
                     </span>
-                    <h2 class="font-serif text-3xl md:text-5xl font-bold leading-tight">
+                    <h2 id="lobby-hero_title" class="font-serif text-3xl md:text-5xl font-bold leading-tight">
                         用最溫柔的專業，<br class="hidden sm:inline">為您奉上最圓滿的思念。
                     </h2>
-                    <p class="text-brand-100/90 text-sm md:text-base leading-relaxed font-light">
+                    <p id="lobby-hero_subtitle" class="text-brand-100/90 text-sm md:text-base leading-relaxed font-light">
                         忙碌生活、身處異鄉 or 行動不便時，思念的傳遞不該留有遺憾。由我們北區專業代祭小組，依循傳統，恭讀報恩疏文、敬獻精緻全素祭品，並提供全程高畫質影音與照片圓滿回報。
                     </p>
                     <div class="flex flex-wrap gap-3 pt-2">
                         <button onclick="switchTab('booking')" class="bg-accent-gold hover:bg-amber-500 text-brand-900 px-6 py-3 rounded-xl text-sm font-bold shadow-md transition transform active:scale-95">
-                            立即預約代辦 <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                            <span id="lobby-hero_btn_book">立即預約代辦</span> <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
                         </button>
                         <button onclick="switchTab('ancestors')" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-5 py-3 rounded-xl text-sm font-semibold transition">
-                            登記先人名冊 <i class="fa-solid fa-users mr-1 text-xs"></i>
+                            <span id="lobby-hero_btn_ancestors">登記先人名冊</span> <i class="fa-solid fa-users mr-1 text-xs"></i>
                         </button>
                     </div>
                 </div>
@@ -252,30 +252,30 @@
             <!-- 4 Step Guide -->
             <div class="space-y-6">
                 <div class="text-center space-y-2">
-                    <h3 class="font-serif text-2xl font-bold text-brand-800">代祭拜服務，如此簡單溫暖</h3>
-                    <p class="text-stone-500 text-xs">依循古典禮俗，導入現代數位便利</p>
+                    <h3 id="lobby-steps_heading" class="font-serif text-2xl font-bold text-brand-800">代祭拜服務，如此簡單溫暖</h3>
+                    <p id="lobby-steps_subheading" class="text-stone-500 text-xs">依循古典禮俗，導入現代數位便利</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div class="bg-white p-6 rounded-2xl border border-brand-100 hover:border-brand-300 transition duration-300 shadow-sm space-y-4">
                         <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-700 font-bold font-serif">一</div>
-                        <h4 class="font-bold text-stone-800 text-sm">登記先人與墓園</h4>
-                        <p class="text-xs text-stone-500 leading-relaxed">建立先人名冊並點選獨家北區實體地圖，選取實際安放之公墓或納骨塔位置。</p>
+                        <h4 id="lobby-step1_title" class="font-bold text-stone-800 text-sm">登記先人與墓園</h4>
+                        <p id="lobby-step1_desc" class="text-xs text-stone-500 leading-relaxed">建立先人名冊並點選獨家北區實體地圖，選取實際安放之公墓或納骨塔位置。</p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl border border-brand-100 hover:border-brand-300 transition duration-300 shadow-sm space-y-4">
                         <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-700 font-bold font-serif">二</div>
-                        <h4 class="font-bold text-stone-800 text-sm">彈性化選購供品</h4>
-                        <p class="text-xs text-stone-500 leading-relaxed">依傳統節日與生辰忌日，自由選購各式精緻純素祭品，亦可極速導入過往代辦設定。</p>
+                        <h4 id="lobby-step2_title" class="font-bold text-stone-800 text-sm">彈性化選購供品</h4>
+                        <p id="lobby-step2_desc" class="text-xs text-stone-500 leading-relaxed">依傳統節日與生辰忌日，自由選購各式精緻純素祭品，亦可極速導入過往代辦設定。</p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl border border-brand-100 hover:border-brand-300 transition duration-300 shadow-sm space-y-4">
                         <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-700 font-bold font-serif">三</div>
-                        <h4 class="font-bold text-stone-800 text-sm">依禮程虔誠敬祀</h4>
-                        <p class="text-xs text-stone-500 leading-relaxed">利用專製虛擬對照曆對齊傳統八大節氣，嚴守 7 日籌辦期，由專員代您行最莊嚴的鞠躬敬獻禮。</p>
+                        <h4 id="lobby-step3_title" class="font-bold text-stone-800 text-sm">依禮程虔誠敬祀</h4>
+                        <p id="lobby-step3_desc" class="text-xs text-stone-500 leading-relaxed">利用專製虛擬對照曆對齊傳統八大節氣，嚴守 7 日籌辦期，由專員代您行最莊嚴的鞠躬敬獻禮。</p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl border border-brand-100 hover:border-brand-300 transition duration-300 shadow-sm space-y-4">
                         <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-700 font-bold font-serif">四</div>
-                        <h4 class="font-bold text-stone-800 text-sm">多媒體影音回饋</h4>
-                        <p class="text-xs text-stone-500 leading-relaxed">儀式圓滿後，專員將上傳現場代辦之高畫質實況與文疏敬獻圓滿照片報告。</p>
+                        <h4 id="lobby-step4_title" class="font-bold text-stone-800 text-sm">多媒體影音回饋</h4>
+                        <p id="lobby-step4_desc" class="text-xs text-stone-500 leading-relaxed">儀式圓滿後，專員將上傳現場代辦之高畫質實況與文疏敬獻圓滿照片報告。</p>
                     </div>
                 </div>
             </div>
@@ -283,35 +283,28 @@
             <!-- Features details -->
             <div class="bg-accent-sand/50 rounded-3xl p-6 md:p-8 border border-brand-100 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div class="space-y-4">
-                    <h3 class="font-serif text-2xl font-bold text-brand-800">為保障莊嚴與安心，我們的四大堅持</h3>
+                    <h3 id="lobby-features_heading" class="font-serif text-2xl font-bold text-brand-800">為保障莊嚴與安心，我們的四大堅持</h3>
                     <ul class="space-y-3 text-xs md:text-sm text-stone-600">
                         <li class="flex items-start space-x-2">
                             <i class="fa-solid fa-leaf text-brand-600 mt-1"></i>
-                            <span><strong>全素清雅供品：</strong> 祭品絕不包含任何肉食與化學防腐，皆採純素天然食材、時令鮮果與鮮花。</span>
+                            <span><strong id="lobby-feature1_title">全素清雅供品</strong>：<span id="lobby-feature1_desc">祭品絕不包含任何肉食與化學防腐，皆採純素天然食材、時令鮮果與鮮花。</span></span>
                         </li>
                         <li class="flex items-start space-x-2">
                             <i class="fa-solid fa-stamp text-brand-600 mt-1"></i>
-                            <span><strong>正式讀疏迴向：</strong> 祭祀現場由代祭專員宣讀報恩文疏，逐一唱名陽上報恩人（上限 6 位）。</span>
+                            <span><strong id="lobby-feature2_title">正式讀疏迴向</strong>：<span id="lobby-feature2_desc">祭祀現場由代祭專員宣讀報恩文疏，逐一唱名陽上報恩人（上限 6 位）。</span></span>
                         </li>
                         <li class="flex items-start space-x-2">
                             <i class="fa-solid fa-camera-retro text-brand-600 mt-1"></i>
-                            <span><strong>真正實證報告：</strong> 每筆圓滿訂單皆包含現場全景、供品特寫、宣讀影片，拒絕使用重複與罐頭影像。</span>
+                            <span><strong id="lobby-feature3_title">真正實證報告</strong>：<span id="lobby-feature3_desc">每筆圓滿訂單皆包含現場全景、供品特寫、宣讀影片，拒絕使用重複與罐頭影像。</span></span>
                         </li>
                         <li class="flex items-start space-x-2">
                             <i class="fa-solid fa-user-shield text-brand-600 mt-1"></i>
-                            <span><strong>嚴密資安防護：</strong> 會員帳號密碼皆安全儲存，修改個資時全面要求 OTP 安全認證。</span>
+                            <span><strong id="lobby-feature4_title">嚴密資安防護</strong>：<span id="lobby-feature4_desc">會員帳號密碼皆安全儲存，修改個資時全面要求 OTP 安全認證。</span></span>
                         </li>
                     </ul>
                 </div>
-                <div class="relative rounded-2xl overflow-hidden shadow-lg border border-brand-200 aspect-[4/3] bg-brand-900 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-[url('https://placehold.co/800x600/2d4133/faf6f0?text=北境雲思安代祀現場模擬影像')] bg-cover bg-center opacity-70"></div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-transparent to-transparent"></div>
-                    <div class="relative text-center text-white px-4 space-y-2">
-                        <div class="w-14 h-14 bg-accent-gold/90 hover:bg-accent-gold text-brand-950 rounded-full flex items-center justify-center mx-auto shadow-lg cursor-pointer transform hover:scale-105 transition" onclick="switchTab('orders')">
-                            <i class="fa-solid fa-play text-xl ml-1"></i>
-                        </div>
-                        <p class="text-xs font-semibold tracking-wide font-serif text-accent-sand">觀看「圓滿結束」代祭影音範例</p>
-                    </div>
+                <div id="lobby-video-box" class="relative rounded-2xl overflow-hidden shadow-lg border border-brand-200 aspect-[4/3] bg-brand-900 flex items-center justify-center">
+                    <!-- 動態渲染：真的影片 (video_url 有值) 或預設示意圖，見 renderLobbyContent() -->
                 </div>
             </div>
         </section>
@@ -788,6 +781,20 @@
 
         <!-- ================= ADMIN TAB (管理後台) ================= -->
         <section id="tab-content-admin" class="hidden space-y-6 animate-fade-in">
+            <!-- Admin Sub Navigation -->
+            <div class="flex flex-wrap gap-1.5 bg-white p-1.5 rounded-2xl border border-stone-200 shadow-xs w-fit">
+                <button onclick="switchAdminPanel('orders')" id="admin-subnav-orders" class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-700 text-white transition">
+                    <i class="fa-solid fa-receipt mr-1"></i>訂單管理
+                </button>
+                <button onclick="switchAdminPanel('content')" id="admin-subnav-content" class="px-4 py-2 rounded-xl text-xs font-medium text-stone-600 hover:bg-stone-100 transition">
+                    <i class="fa-solid fa-pen-to-square mr-1"></i>大廳內容管理
+                </button>
+                <button onclick="switchAdminPanel('offerings')" id="admin-subnav-offerings" class="px-4 py-2 rounded-xl text-xs font-medium text-stone-600 hover:bg-stone-100 transition">
+                    <i class="fa-solid fa-seedling mr-1"></i>祭品項目管理
+                </button>
+            </div>
+
+        <div id="admin-panel-orders" class="space-y-6">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs space-y-1">
                     <span class="text-[10px] font-bold text-stone-400 block uppercase tracking-wider">累積委託總數</span>
@@ -860,6 +867,66 @@
                     </table>
                 </div>
             </div>
+        </div>
+        <!-- /admin-panel-orders -->
+
+        <!-- ================= ADMIN: 大廳內容管理 ================= -->
+        <div id="admin-panel-content" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
+                <div class="border-b border-stone-100 pb-3">
+                    <h3 class="font-serif text-base font-bold text-brand-800">大廳頁面文字內容</h3>
+                    <p class="text-xs text-stone-500 mt-1">修改後點擊最下方「儲存所有內容」，大廳頁面會立即更新。</p>
+                </div>
+                <div id="admin-content-fields" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Populated dynamically via JS -->
+                </div>
+                <button onclick="saveSiteContent()" class="w-full bg-brand-700 hover:bg-brand-800 text-white py-3 rounded-xl text-xs font-bold transition">
+                    儲存所有內容
+                </button>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+                <div class="border-b border-stone-100 pb-3">
+                    <h3 class="font-serif text-base font-bold text-brand-800">大廳示範影片</h3>
+                    <p class="text-xs text-stone-500 mt-1">上傳一支真實的代祭示範影片，訪客在大廳頁面可以直接播放。上傳新的會取代目前這支。</p>
+                </div>
+                <div id="admin-video-current" class="text-xs text-stone-500"></div>
+                <input type="file" accept="video/*" onchange="handleLobbyVideoUpload(event)" class="text-xs">
+                <div id="admin-video-upload-status" class="text-xs text-brand-700"></div>
+            </div>
+        </div>
+        <!-- /admin-panel-content -->
+
+        <!-- ================= ADMIN: 祭品項目管理 ================= -->
+        <div id="admin-panel-offerings" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+                <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+                    <h3 class="font-serif text-base font-bold text-brand-800">常規供品（全年供應）</h3>
+                    <button onclick="addOfferingRow('general')" class="bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 px-3 py-1.5 rounded-lg text-xs transition">
+                        <i class="fa-solid fa-circle-plus mr-1"></i>新增常規供品
+                    </button>
+                </div>
+                <div id="admin-offerings-general-list" class="space-y-2">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
+                    <h3 class="font-serif text-base font-bold text-brand-800">節日限定供品</h3>
+                    <div class="flex items-center gap-2">
+                        <select id="admin-offerings-festival-select" onchange="renderAdminOfferingsFestivalList()" class="text-xs p-2 rounded-lg border border-stone-200 outline-none"></select>
+                        <button onclick="addOfferingRow('festival')" class="bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 px-3 py-1.5 rounded-lg text-xs transition shrink-0">
+                            <i class="fa-solid fa-circle-plus mr-1"></i>新增
+                        </button>
+                    </div>
+                </div>
+                <div id="admin-offerings-festival-list" class="space-y-2">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </div>
+        <!-- /admin-panel-offerings -->
         </section>
 
     </main>
@@ -1615,27 +1682,109 @@
             { id: "f8", name: "冬至", lunar: "國曆12/21-22", dates: { "2025": "2025-12-21", "2026": "2026-12-22", "2027": "2027-12-22", "2028": "2028-12-21" } }
         ];
 
-        const OFFERINGS = {
-            general: [
-                { id: "o1", name: "清雅時令鮮果", price: 500, desc: "時令水果4款，莊嚴精緻擺盤" },
-                { id: "o2", name: "至誠茹素供齋", price: 800, desc: "遵循清淨茹素傳統，精緻素菜6盤、白飯1碗" },
-                { id: "o3", name: "莊嚴素三牲禮", price: 600, desc: "精緻蒟蒻與糕點製作，傳遞最深切的緬懷與心意" },
-                { id: "o4", name: "至孝思親金袋", price: 200, desc: "精緻的紙紮與元寶，滿懷牽掛遙寄千里" },
-                { id: "o5", name: "追遠九轉蓮臺", price: 300, desc: "承載手作溫度的蓮花，傳遞那未說出口的掛念" },
-                { id: "o6", name: "莊嚴鮮花花束", price: 250, desc: "清雅淡雅鮮花一束，寄託悠長思念" },
-                { id: "o7", name: "福澤週年祈福禮", price: 1600, desc: "純素菜6盤、白飯1碗、四種鮮果共5顆、發糕2個、鮮花1對、米酒3小杯，循古禮之備辦，願彼岸安穩、福澤綿長", restrictTo: "週年忌日" }
-            ],
-            festival: {
-                "除夕": [{ id: "fe1", name: "團圓除夕迎春素盤", price: 1200, desc: "傳統除夕精緻十樣春歲素饌大盤" }],
-                "元宵節": [{ id: "fe2", name: "元宵福運團圓甜湯", price: 400, desc: "有機紅豆花生湯圓甜湯，吉祥如意" }],
-                "清明節": [{ id: "fe3", name: "清明感恩艾草粿", price: 350, desc: "北區手工清明草仔粿與傳統潤餅" }],
-                "端午節": [{ id: "fe4", name: "端午香艾養生全粽", price: 450, desc: "無肉健康五穀香粽 3 入與艾草掛飾" }],
-                "中元節": [{ id: "fe5", name: "合境平安普渡禮盒", price: 1500, desc: "澎湃素食乾貨、平安米與金銀紙帛" }],
-                "中秋節": [{ id: "fe6", name: "月滿中秋素禮月餅", price: 600, desc: "手作低糖素綠豆椪與養生豆沙餅" }],
-                "重陽節": [{ id: "fe7", name: "重陽敬老登高壽桃" , price: 500, desc: "手工松子豆沙壽桃與重陽登高素糕" }],
-                "冬至": [{ id: "fe8", name: "冬至暖心雙色湯圓", price: 400, desc: "純手工雙色養生紅白小湯圓甜湯" }]
-            }
+        // 祭品項目改由 offerings 資料表載入（見 loadOfferings()），這裡先給空殼，
+        // 避免載入完成前其他函式讀取 OFFERINGS.general / OFFERINGS.festival[x] 時噴錯。
+        let OFFERINGS = {
+            general: [],
+            festival: {}
         };
+
+        function offeringRowToItem(row) {
+            const item = { id: row.id, name: row.name, price: row.price, desc: row.description || '' };
+            if (row.restrict_to) item.restrictTo = row.restrict_to;
+            return item;
+        }
+
+        async function loadOfferings() {
+            const { data, error } = await sb
+                .from('offerings')
+                .select('*')
+                .eq('active', true)
+                .order('sort_order', { ascending: true });
+
+            if (error) {
+                showToast(`讀取祭品項目失敗：${error.message}`, "error");
+                return;
+            }
+
+            const general = [];
+            const festival = {};
+            (data || []).forEach(row => {
+                if (row.category === 'general') {
+                    general.push(offeringRowToItem(row));
+                } else if (row.category === 'festival' && row.festival_key) {
+                    if (!festival[row.festival_key]) festival[row.festival_key] = [];
+                    festival[row.festival_key].push(offeringRowToItem(row));
+                }
+            });
+
+            OFFERINGS = { general, festival };
+        }
+
+        // ==================== 大廳內容 (site_content) ====================
+        const LOBBY_TEXT_FIELDS = [
+            'hero_badge', 'hero_title', 'hero_subtitle', 'hero_btn_book', 'hero_btn_ancestors',
+            'steps_heading', 'steps_subheading',
+            'step1_title', 'step1_desc', 'step2_title', 'step2_desc',
+            'step3_title', 'step3_desc', 'step4_title', 'step4_desc',
+            'features_heading',
+            'feature1_title', 'feature1_desc', 'feature2_title', 'feature2_desc',
+            'feature3_title', 'feature3_desc', 'feature4_title', 'feature4_desc'
+        ];
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        async function loadSiteContent() {
+            const { data, error } = await sb.from('site_content').select('*');
+            if (error) {
+                showToast(`讀取大廳內容失敗：${error.message}`, "error");
+                return;
+            }
+            state.siteContent = {};
+            (data || []).forEach(row => { state.siteContent[row.key] = row.value; });
+        }
+
+        function renderLobbyContent() {
+            LOBBY_TEXT_FIELDS.forEach(key => {
+                const el = document.getElementById('lobby-' + key);
+                const value = state.siteContent[key];
+                if (!el || value === undefined || value === null || value === '') return;
+
+                if (key === 'hero_title') {
+                    el.innerHTML = value.split('\n').map(escapeHtml).join('<br class="hidden sm:inline">');
+                } else {
+                    el.textContent = value;
+                }
+            });
+            renderLobbyVideo();
+        }
+
+        function renderLobbyVideo() {
+            const box = document.getElementById('lobby-video-box');
+            if (!box) return;
+
+            const videoUrl = state.siteContent.video_url;
+            const caption = state.siteContent.video_caption || '觀看「圓滿結束」代祭影音範例';
+
+            if (videoUrl) {
+                box.innerHTML = `<video src="${videoUrl}" controls class="w-full h-full object-cover bg-black"></video>`;
+            } else {
+                box.innerHTML = `
+                    <div class="absolute inset-0 bg-[url('https://placehold.co/800x600/2d4133/faf6f0?text=北境雲思安代祀現場模擬影像')] bg-cover bg-center opacity-70"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-transparent to-transparent"></div>
+                    <div class="relative text-center text-white px-4 space-y-2">
+                        <div class="w-14 h-14 bg-accent-gold/90 hover:bg-accent-gold text-brand-950 rounded-full flex items-center justify-center mx-auto shadow-lg cursor-pointer transform hover:scale-105 transition" onclick="switchTab('orders')">
+                            <i class="fa-solid fa-play text-xl ml-1"></i>
+                        </div>
+                        <p class="text-xs font-semibold tracking-wide font-serif text-accent-sand">${escapeHtml(caption)}</p>
+                    </div>
+                `;
+            }
+        }
 
         // 代辦基本服務費，依代辦服務項目不同而異，加購供品費用另計
         const SERVICE_BASE_FEE = {
@@ -1781,6 +1930,8 @@
             // 先人名冊與訂單改由 Supabase 讀取，登入/註冊後會呼叫 loadAncestors()/loadOrders() 填入
             ancestors: [],
             orders: [],
+            // 大廳文字與示範影片，見 loadSiteContent()/renderLobbyContent()
+            siteContent: {},
             bookingForm: {
                 serviceType: "一般祭拜",
                 festivalName: "",
@@ -2038,6 +2189,7 @@
                     clockLabel.textContent = `臺北標準時間: 2026年7月20日 星期一`;
                 }
             } else if (tabId === 'admin' && state.isLoggedIn) {
+                switchAdminPanel('orders');
                 renderAdminDashboard();
             }
         }
@@ -3431,6 +3583,258 @@
             }, 2000);
         }
 
+        function switchAdminPanel(panel) {
+            ['orders', 'content', 'offerings'].forEach(id => {
+                const div = document.getElementById(`admin-panel-${id}`);
+                const btn = document.getElementById(`admin-subnav-${id}`);
+                if (div) div.classList.toggle('hidden', id !== panel);
+                if (btn) {
+                    btn.className = id === panel
+                        ? "px-4 py-2 rounded-xl text-xs font-bold bg-brand-700 text-white transition"
+                        : "px-4 py-2 rounded-xl text-xs font-medium text-stone-600 hover:bg-stone-100 transition";
+                }
+            });
+
+            if (panel === 'content') {
+                renderAdminContentFields();
+            } else if (panel === 'offerings') {
+                renderAdminOfferingsGeneralList();
+                populateAdminOfferingsFestivalSelect();
+                renderAdminOfferingsFestivalList();
+            }
+        }
+
+        // ==================== 大廳內容管理 ====================
+        const ADMIN_CONTENT_FIELD_GROUPS = [
+            { group: 'Hero 主視覺', fields: [
+                { key: 'hero_badge', label: '頂部小標籤' },
+                { key: 'hero_title', label: '主標題（換行請直接按 Enter）' },
+                { key: 'hero_subtitle', label: '說明文字' },
+                { key: 'hero_btn_book', label: '按鈕文字：立即預約代辦' },
+                { key: 'hero_btn_ancestors', label: '按鈕文字：登記先人名冊' }
+            ]},
+            { group: '四步驟指南', fields: [
+                { key: 'steps_heading', label: '區塊標題' },
+                { key: 'steps_subheading', label: '區塊副標' },
+                { key: 'step1_title', label: '步驟一標題' }, { key: 'step1_desc', label: '步驟一說明' },
+                { key: 'step2_title', label: '步驟二標題' }, { key: 'step2_desc', label: '步驟二說明' },
+                { key: 'step3_title', label: '步驟三標題' }, { key: 'step3_desc', label: '步驟三說明' },
+                { key: 'step4_title', label: '步驟四標題' }, { key: 'step4_desc', label: '步驟四說明' }
+            ]},
+            { group: '四大堅持', fields: [
+                { key: 'features_heading', label: '區塊標題' },
+                { key: 'feature1_title', label: '項目一標題' }, { key: 'feature1_desc', label: '項目一說明' },
+                { key: 'feature2_title', label: '項目二標題' }, { key: 'feature2_desc', label: '項目二說明' },
+                { key: 'feature3_title', label: '項目三標題' }, { key: 'feature3_desc', label: '項目三說明' },
+                { key: 'feature4_title', label: '項目四標題' }, { key: 'feature4_desc', label: '項目四說明' }
+            ]},
+            { group: '示範影片', fields: [
+                { key: 'video_caption', label: '影片下方文字' }
+            ]}
+        ];
+
+        function renderAdminContentFields() {
+            const container = document.getElementById('admin-content-fields');
+            if (!container) return;
+            container.innerHTML = '';
+
+            ADMIN_CONTENT_FIELD_GROUPS.forEach(section => {
+                const groupTitle = document.createElement('div');
+                groupTitle.className = "md:col-span-2 text-xs font-bold text-brand-700 border-b border-brand-50 pb-1 mt-2 first:mt-0";
+                groupTitle.textContent = section.group;
+                container.appendChild(groupTitle);
+
+                section.fields.forEach(f => {
+                    const wrap = document.createElement('div');
+                    wrap.className = "space-y-1";
+                    const value = state.siteContent[f.key] || '';
+                    wrap.innerHTML = `
+                        <label class="text-xs font-bold text-stone-600">${f.label}</label>
+                        <textarea id="admin-content-input-${f.key}" rows="2" class="w-full text-xs p-2.5 rounded-lg border border-stone-200 focus:ring-1 focus:ring-brand-500 outline-none">${escapeHtml(value)}</textarea>
+                    `;
+                    container.appendChild(wrap);
+                });
+            });
+
+            const videoInfo = document.getElementById('admin-video-current');
+            if (videoInfo) {
+                videoInfo.textContent = state.siteContent.video_url
+                    ? '目前已有上傳的示範影片，重新上傳會取代它。'
+                    : '目前尚未上傳示範影片，大廳會顯示預設示意圖。';
+            }
+        }
+
+        async function saveSiteContent() {
+            const rows = [];
+            ADMIN_CONTENT_FIELD_GROUPS.forEach(section => {
+                section.fields.forEach(f => {
+                    const el = document.getElementById(`admin-content-input-${f.key}`);
+                    if (el) rows.push({ key: f.key, value: el.value });
+                });
+            });
+
+            const { error } = await sb.from('site_content').upsert(rows);
+            if (error) {
+                showToast(`儲存失敗：${error.message}`, "error");
+                return;
+            }
+
+            rows.forEach(r => { state.siteContent[r.key] = r.value; });
+            renderLobbyContent();
+            showToast("大廳內容已成功儲存並更新！", "success");
+        }
+
+        async function handleLobbyVideoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const statusEl = document.getElementById('admin-video-upload-status');
+            if (statusEl) statusEl.textContent = "上傳中...";
+
+            try {
+                const ext = file.name.split('.').pop();
+                const url = await uploadToMediaBucket(file, `site/lobby-video-${Date.now()}.${ext}`);
+
+                const { error } = await sb.from('site_content').upsert([{ key: 'video_url', value: url }]);
+                if (error) throw error;
+
+                state.siteContent.video_url = url;
+                renderLobbyContent();
+                renderAdminContentFields();
+                if (statusEl) statusEl.textContent = "上傳完成，大廳已更新！";
+                showToast("示範影片上傳成功！", "success");
+            } catch (err) {
+                if (statusEl) statusEl.textContent = "";
+                showToast(`影片上傳失敗：${err.message || err}`, "error");
+            }
+
+            event.target.value = "";
+        }
+
+        // ==================== 祭品項目管理 ====================
+        let currentAdminOfferingsFestival = null;
+
+        function populateAdminOfferingsFestivalSelect() {
+            const sel = document.getElementById('admin-offerings-festival-select');
+            if (!sel) return;
+            sel.innerHTML = '';
+            FESTIVALS.forEach(f => {
+                const opt = document.createElement('option');
+                opt.value = f.name;
+                opt.textContent = f.name;
+                sel.appendChild(opt);
+            });
+            if (!currentAdminOfferingsFestival) currentAdminOfferingsFestival = FESTIVALS[0].name;
+            sel.value = currentAdminOfferingsFestival;
+        }
+
+        function offeringRowCardHTML(o) {
+            return `
+                <div class="flex flex-wrap items-center gap-2 p-3 rounded-xl border border-stone-200 bg-stone-50">
+                    <input type="text" value="${escapeHtml(o.name)}" onchange="updateOfferingField('${o.id}', 'name', this.value)" class="flex-1 min-w-[140px] text-xs p-2 rounded-lg border border-stone-200 bg-white" placeholder="供品名稱">
+                    <input type="number" value="${o.price}" onchange="updateOfferingField('${o.id}', 'price', this.value)" class="w-24 text-xs p-2 rounded-lg border border-stone-200 bg-white" placeholder="價格">
+                    <input type="text" value="${escapeHtml(o.description || '')}" onchange="updateOfferingField('${o.id}', 'description', this.value)" class="flex-[2] min-w-[180px] text-xs p-2 rounded-lg border border-stone-200 bg-white" placeholder="說明">
+                    <button onclick="deleteOffering('${o.id}')" class="text-stone-300 hover:text-red-600 p-2 text-xs shrink-0"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            `;
+        }
+
+        async function fetchAdminOfferings(category, festivalKey) {
+            let query = sb.from('offerings').select('*').eq('category', category).order('sort_order', { ascending: true });
+            if (category === 'festival') query = query.eq('festival_key', festivalKey);
+            const { data, error } = await query;
+            if (error) {
+                showToast(`讀取供品失敗：${error.message}`, "error");
+                return [];
+            }
+            return data || [];
+        }
+
+        async function renderAdminOfferingsGeneralList() {
+            const container = document.getElementById('admin-offerings-general-list');
+            if (!container) return;
+            const rows = await fetchAdminOfferings('general');
+            container.innerHTML = rows.length
+                ? rows.map(offeringRowCardHTML).join('')
+                : `<p class="text-xs text-stone-400 italic text-center py-4">尚無常規供品項目</p>`;
+        }
+
+        async function renderAdminOfferingsFestivalList() {
+            const sel = document.getElementById('admin-offerings-festival-select');
+            const container = document.getElementById('admin-offerings-festival-list');
+            if (!sel || !container) return;
+            currentAdminOfferingsFestival = sel.value;
+            const rows = await fetchAdminOfferings('festival', currentAdminOfferingsFestival);
+            container.innerHTML = rows.length
+                ? rows.map(offeringRowCardHTML).join('')
+                : `<p class="text-xs text-stone-400 italic text-center py-4">此節日尚無限定供品項目</p>`;
+        }
+
+        async function updateOfferingField(id, field, value) {
+            const payload = {};
+            payload[field] = field === 'price' ? Number(value) : value;
+            const { error } = await sb.from('offerings').update(payload).eq('id', id);
+            if (error) {
+                showToast(`更新失敗：${error.message}`, "error");
+                return;
+            }
+            showToast("供品項目已更新！", "success");
+            await loadOfferings();
+            renderAllOfferings();
+        }
+
+        async function deleteOffering(id) {
+            const confirmed = confirm("確定要刪除這項供品嗎？");
+            if (!confirmed) return;
+
+            const { error } = await sb.from('offerings').delete().eq('id', id);
+            if (error) {
+                showToast(`刪除失敗：${error.message}`, "error");
+                return;
+            }
+
+            showToast("供品項目已刪除。", "info");
+            await loadOfferings();
+            renderAllOfferings();
+            renderAdminOfferingsGeneralList();
+            renderAdminOfferingsFestivalList();
+        }
+
+        async function addOfferingRow(category) {
+            const name = prompt(category === 'general' ? "新增常規供品名稱：" : "新增節日供品名稱：");
+            if (!name) return;
+            const priceStr = prompt("價格 (數字)：", "100");
+            const price = Number(priceStr);
+            if (!priceStr || isNaN(price)) {
+                showToast("價格輸入無效，已取消新增。", "error");
+                return;
+            }
+
+            const payload = {
+                id: 'off-' + Date.now(),
+                category,
+                name,
+                price,
+                description: '',
+                sort_order: 99
+            };
+            if (category === 'festival') {
+                payload.festival_key = document.getElementById('admin-offerings-festival-select').value;
+            }
+
+            const { error } = await sb.from('offerings').insert(payload);
+            if (error) {
+                showToast(`新增失敗：${error.message}`, "error");
+                return;
+            }
+
+            showToast("供品項目已新增！", "success");
+            await loadOfferings();
+            renderAllOfferings();
+            renderAdminOfferingsGeneralList();
+            renderAdminOfferingsFestivalList();
+        }
+
         function setAdminFilter(f) {
             currentAdminFilter = f;
             ['all', 'pending', 'completed'].forEach(id => {
@@ -4345,9 +4749,15 @@
         }
 
         // Initial application bootstrap
-        populateFestivalSelector();
-        renderAllOfferings();
-        restoreSession();
+        async function bootstrapApp() {
+            populateFestivalSelector();
+            await loadOfferings();
+            renderAllOfferings();
+            await loadSiteContent();
+            renderLobbyContent();
+            await restoreSession();
+        }
+        bootstrapApp();
     </script>
 </body>
 </html>
