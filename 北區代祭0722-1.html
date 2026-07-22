@@ -707,12 +707,18 @@
                 </div>
 
                 <!-- Status Filter Tabs -->
-                <div class="flex border-b border-brand-100">
+                <div class="flex border-b border-brand-100 flex-wrap">
+                    <button onclick="filterOrders('待付款')" id="order-tab-unpaid" class="border-b-2 border-transparent text-red-500 hover:text-red-700 px-6 py-2 text-xs font-bold transition flex items-center">
+                        <i class="fa-solid fa-triangle-exclamation mr-1"></i>尚未付款
+                    </button>
                     <button onclick="filterOrders('安排中')" id="order-tab-pending" class="border-b-2 border-brand-700 text-brand-700 px-6 py-2 text-xs font-bold transition">
                         安排中 (籌辦中)
                     </button>
                     <button onclick="filterOrders('圓滿結束')" id="order-tab-completed" class="border-b-2 border-transparent text-stone-500 hover:text-brand-700 px-6 py-2 text-xs font-medium transition">
                         圓滿結束 (多媒體報告已交付)
+                    </button>
+                    <button onclick="filterOrders('已取消')" id="order-tab-cancelled" class="border-b-2 border-transparent text-stone-500 hover:text-brand-700 px-6 py-2 text-xs font-medium transition">
+                        已取消
                     </button>
                 </div>
 
@@ -817,7 +823,7 @@
             </div>
 
         <div id="admin-panel-orders" class="space-y-6">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
                 <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs space-y-1">
                     <span class="text-[10px] font-bold text-stone-400 block uppercase tracking-wider">累積委託總數</span>
                     <div class="flex items-baseline space-x-1">
@@ -846,6 +852,13 @@
                         <span class="text-xs text-stone-500">筆</span>
                     </div>
                 </div>
+                <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs space-y-1">
+                    <span class="text-[10px] font-bold text-stone-500 block uppercase tracking-wider">已取消</span>
+                    <div class="flex items-baseline space-x-1">
+                        <span id="admin-stat-cancelled-count" class="text-2xl font-mono font-bold text-stone-600">0</span>
+                        <span class="text-xs text-stone-500">筆</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Filter Controls -->
@@ -859,6 +872,9 @@
                     </button>
                     <button onclick="setAdminFilter('圓滿結束')" id="admin-filter-completed" class="px-3 py-1.5 rounded-lg text-xs font-medium text-stone-600 hover:bg-stone-100 transition">
                         已圓滿
+                    </button>
+                    <button onclick="setAdminFilter('已取消')" id="admin-filter-cancelled" class="px-3 py-1.5 rounded-lg text-xs font-medium text-stone-600 hover:bg-stone-100 transition">
+                        已取消
                     </button>
                 </div>
 
@@ -1512,6 +1528,7 @@
                     <p class="text-stone-600">預定日期：<span id="adm-det-date" class="font-bold text-stone-800 font-mono">--</span></p>
                     <p class="text-stone-600">付款方式：<span id="adm-det-payment-method" class="font-bold text-stone-800">--</span></p>
                     <p class="text-stone-600">目前狀態：<span id="adm-det-status" class="font-bold text-stone-800">--</span></p>
+                    <p id="adm-det-cancel-reason-row" class="hidden text-stone-600">取消理由：<span id="adm-det-cancel-reason" class="font-bold text-red-700">--</span></p>
                 </div>
 
                 <!-- Orderer Contact Info -->
@@ -1551,7 +1568,7 @@
                 <div class="bg-stone-50 p-4 rounded-xl border border-brand-100 space-y-3 md:col-span-2 shadow-xs">
                     <h4 class="font-bold text-brand-800 border-b border-brand-200 pb-1.5 flex items-center justify-between">
                         <span class="flex items-center"><i class="fa-solid fa-route mr-1.5 text-brand-700"></i> 3. 代辦進度階段管理</span>
-                        <span class="text-[10px] text-stone-400 font-normal">第一階段由客戶送出表單即自動確認，其餘階段須由管理員手動確認</span>
+                        <span class="text-[10px] text-stone-400 font-normal">第一階段於客戶完成付款時即自動確認，其餘階段須由管理員手動確認</span>
                     </h4>
                     <div id="adm-det-stage-steps" class="space-y-4 pl-3 relative before:content-[''] before:absolute before:left-[9px] before:top-2 before:bottom-2 before:w-0.5 before:bg-stone-200">
                         <!-- Rendered dynamically via renderStageTimelineHTML() -->
@@ -1597,6 +1614,9 @@
                     <span class="text-[10px] text-stone-500">修改將即時發布至家屬端的多媒體影音報告區。</span>
                 </div>
                 <div class="flex space-x-2 w-full sm:w-auto">
+                    <button id="adm-det-btn-cancel-order" onclick="" class="hidden flex-1 sm:flex-initial bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2 rounded-lg transition font-semibold shadow-xs">
+                        取消此筆委託
+                    </button>
                     <button id="adm-det-btn-toggle" onclick="" class="flex-1 sm:flex-initial bg-brand-700 hover:bg-brand-800 text-white text-xs px-4 py-2 rounded-lg transition font-semibold shadow-xs">
                         變更代辦狀態
                     </button>
@@ -1894,9 +1914,10 @@
             "週年忌日": 1200
         };
 
-        // 5-stage progress timeline. Stage 1 auto-confirms the moment a customer
-        // submits the booking form; stages 2-4 require an admin to manually confirm
-        // each step, and stage 5 completes when the admin publishes the media report.
+        // 5-stage progress timeline. An order sits as "待付款" (stage 0, not yet established)
+        // until payment succeeds; stage 1 auto-confirms the moment payment is confirmed, landing
+        // the order on stage 2. Stages 2-4 require an admin to manually confirm each step, and
+        // stage 5 completes when the admin publishes the media report.
         const CN_STAGE_NUM = ["一", "二", "三", "四", "五"];
         const STAGE_INFO = [
             { title: "委託受理建檔", doneDesc: "訂單已完成繳費與成立，系統已自動確認收件。" },
@@ -2456,21 +2477,39 @@
 
         function filterOrders(status) {
             currentStatusFilter = status;
+            const btnUnpaid = document.getElementById('order-tab-unpaid');
             const btnPending = document.getElementById('order-tab-pending');
             const btnCompleted = document.getElementById('order-tab-completed');
+            const btnCancelled = document.getElementById('order-tab-cancelled');
 
-            if (status === '安排中') {
-                if (btnPending) btnPending.className = "border-b-2 border-brand-700 text-brand-700 px-6 py-2 text-xs font-bold transition";
-                if (btnCompleted) btnCompleted.className = "border-b-2 border-transparent text-stone-500 hover:text-brand-700 px-6 py-2 text-xs font-medium transition";
-            } else {
-                if (btnCompleted) btnCompleted.className = "border-b-2 border-brand-700 text-brand-700 px-6 py-2 text-xs font-bold transition";
-                if (btnPending) btnPending.className = "border-b-2 border-transparent text-stone-500 hover:text-brand-700 px-6 py-2 text-xs font-medium transition";
-            }
+            const activeClass = "border-b-2 border-brand-700 text-brand-700 px-6 py-2 text-xs font-bold transition";
+            const inactiveClass = "border-b-2 border-transparent text-stone-500 hover:text-brand-700 px-6 py-2 text-xs font-medium transition";
+            const unpaidActiveClass = "border-b-2 border-red-600 text-red-700 px-6 py-2 text-xs font-bold transition flex items-center";
+            const unpaidInactiveClass = "border-b-2 border-transparent text-red-500 hover:text-red-700 px-6 py-2 text-xs font-bold transition flex items-center";
+
+            if (btnUnpaid) btnUnpaid.className = status === '待付款' ? unpaidActiveClass : unpaidInactiveClass;
+            if (btnPending) btnPending.className = status === '安排中' ? activeClass : inactiveClass;
+            if (btnCompleted) btnCompleted.className = status === '圓滿結束' ? activeClass : inactiveClass;
+            if (btnCancelled) btnCancelled.className = status === '已取消' ? activeClass : inactiveClass;
 
             renderOrdersList();
         }
 
+        function formatRemainingTime(ms) {
+            if (ms <= 0) return '付款保留時效已過';
+            const totalMinutes = Math.floor(ms / 60000);
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            return `付款保留時效：剩餘 ${hours} 小時 ${minutes} 分鐘`;
+        }
+
         function renderOrdersList() {
+            // Fire-and-forget: if any "待付款" order just crossed its 3-hour deadline, flip it to
+            // "已取消" in the background and re-render once done. Doesn't block the current paint.
+            checkAndExpireUnpaidOrders().then(changed => {
+                if (changed) renderOrdersList();
+            });
+
             const grid = document.getElementById('orders-cards-grid');
             if (!grid) return;
             grid.innerHTML = '';
@@ -2489,8 +2528,91 @@
 
             filtered.forEach(o => {
                 const card = document.createElement('div');
+
+                if (o.status === '待付款') {
+                    const deadline = o.createdAt ? new Date(o.createdAt).getTime() + 3 * 60 * 60 * 1000 : 0;
+                    const remainingMs = deadline - Date.now();
+                    const expired = remainingMs <= 0;
+
+                    card.className = "bg-red-50 rounded-2xl border-2 border-red-200 p-5 shadow-sm space-y-4 relative flex flex-col justify-between";
+                    card.innerHTML = `
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[10px] font-mono text-stone-400">單號: ${o.id}</span>
+                                <span class="bg-red-100 text-red-800 text-[9px] px-2 py-0.5 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>尚未付款・未成立</span>
+                            </div>
+
+                            <div class="border-b border-red-100 pb-2 space-y-1">
+                                <h4 class="font-serif font-bold text-brand-900 text-base">${o.ancestorName} 先人案前</h4>
+                                <p class="text-xs text-stone-500">${o.serviceType}${o.festivalName ? ` (${o.festivalName})` : ''}</p>
+                            </div>
+
+                            <div class="text-[11px] text-stone-600 space-y-1">
+                                <p><strong>下單日期：</strong> ${o.createdAt ? new Date(o.createdAt).toLocaleString('zh-TW') : '--'}</p>
+                                <p><strong>預定日期：</strong> <span class="font-mono font-bold">${o.date}</span></p>
+                                <p><strong>付款方式：</strong> ${o.paymentMethod || '未提供'}</p>
+                                <p class="font-bold ${expired ? 'text-stone-400' : 'text-red-700'}">${expired ? '付款保留時效已過，本筆委託視為未成立' : formatRemainingTime(remainingMs)}</p>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-red-100 flex items-center justify-between mt-4 gap-2">
+                            <span class="text-xs font-bold text-brand-800 font-mono">NT$ ${o.totalCost.toLocaleString()}</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="cancelUnpaidOrder('${o.id}')" class="bg-stone-200 hover:bg-stone-300 text-stone-700 text-xs px-3 py-2 rounded-xl font-bold transition">
+                                    取消訂單
+                                </button>
+                                ${expired
+                                    ? `<span class="text-[10px] text-stone-400 italic px-2">已逾期失效</span>`
+                                    : `<button onclick="resumePaymentForOrder('${o.id}')" class="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2 rounded-xl font-bold transition shadow-sm"><i class="fa-solid fa-credit-card mr-1"></i> 前往付款</button>`
+                                }
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                    return;
+                }
+
+                if (o.status === '已取消') {
+                    // Only orders that had already reached 安排中 (stage >= 2) were ever actually
+                    // paid — those were admin-cancelled and refunded. Orders still at stage 0 were
+                    // cancelled while unpaid (by the customer or by the 3-hour auto-expiry), so no
+                    // money ever changed hands and no refund applies.
+                    const wasEverPaid = (o.stage || 0) >= 2;
+
+                    card.className = "bg-stone-100 rounded-2xl border-2 border-stone-300 p-5 shadow-sm space-y-4 relative flex flex-col justify-between opacity-90";
+                    card.innerHTML = `
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[10px] font-mono text-stone-400">單號: ${o.id}</span>
+                                <span class="bg-stone-300 text-stone-700 text-[9px] px-2 py-0.5 rounded-full font-bold"><i class="fa-solid fa-ban mr-1"></i>已取消</span>
+                            </div>
+
+                            <div class="border-b border-stone-200 pb-2 space-y-1">
+                                <h4 class="font-serif font-bold text-stone-700 text-base">${o.ancestorName} 先人案前</h4>
+                                <p class="text-xs text-stone-500">${o.serviceType}${o.festivalName ? ` (${o.festivalName})` : ''}</p>
+                            </div>
+
+                            <div class="text-[11px] text-stone-600 space-y-1">
+                                <p><strong>下單日期：</strong> ${o.createdAt ? new Date(o.createdAt).toLocaleDateString('zh-TW') : '--'}</p>
+                                <p><strong>預定日期：</strong> <span class="font-mono font-bold">${o.date}</span></p>
+                                <p><strong>付款方式：</strong> ${o.paymentMethod || '未提供'}</p>
+                                <div class="bg-white border border-stone-200 rounded-lg p-2.5 mt-2 space-y-1">
+                                    <p class="font-bold text-stone-800"><i class="fa-solid fa-circle-info mr-1 text-stone-500"></i>${wasEverPaid ? '管理員取消，已全額退款' : '未付款取消，無需退款'}</p>
+                                    <p class="text-stone-500">取消原因：${o.cancelReason || '未提供原因'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-stone-200 flex items-center justify-between mt-4">
+                            <span class="text-xs font-bold text-stone-500 font-mono ${wasEverPaid ? 'line-through' : ''}">NT$ ${o.totalCost.toLocaleString()}</span>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                    return;
+                }
+
                 card.className = "bg-white rounded-2xl border border-brand-100 p-5 shadow-sm space-y-4 hover:border-brand-300 transition duration-200 relative flex flex-col justify-between";
-                
+
                 const statusBadge = o.status === '安排中' ?
                     '<span class="bg-amber-100 text-amber-800 text-[9px] px-2 py-0.5 rounded-full font-bold">安排中 (籌辦整備)</span>' :
                     '<span class="bg-emerald-100 text-emerald-800 text-[9px] px-2 py-0.5 rounded-full font-bold">圓滿結束 (影像已交付)</span>';
@@ -3165,10 +3287,12 @@
                 date: row.date,
                 offerings: row.offerings || [],
                 paymentMethod: row.payment_method,
+                storeCode: row.store_code,
                 createdAt: row.created_at,
                 note: row.note,
                 status: row.status,
                 stage: row.stage,
+                cancelReason: row.cancel_reason,
                 totalCost: row.total_cost,
                 mediaReport: row.media_report
             };
@@ -3186,13 +3310,45 @@
                 return;
             }
             state.orders = (data || []).map(orderRowToObj);
+            await checkAndExpireUnpaidOrders();
             renderOrdersList();
             if (state.user.isAdmin) renderAdminDashboard();
         }
 
-        let pendingBookingSubmission = null;
+        // Any "待付款" order past its 3-hour payment window is no longer held — this lazily
+        // flips it to "已取消" (system auto-cancel) the next time orders are loaded or rendered.
+        // There's no server-side cron for this, so the check runs on the client instead.
+        async function checkAndExpireUnpaidOrders() {
+            const now = Date.now();
+            const expiredOnes = state.orders.filter(o =>
+                o.status === '待付款' &&
+                o.createdAt &&
+                (new Date(o.createdAt).getTime() + 3 * 60 * 60 * 1000) <= now
+            );
+            if (expiredOnes.length === 0) return false;
 
-        function submitBookingOrder() {
+            let anyUpdated = false;
+            for (const o of expiredOnes) {
+                const { data, error } = await sb
+                    .from('orders')
+                    .update({ status: '已取消', cancel_reason: '付款保留時效已過（3 小時內未完成付款），系統自動取消' })
+                    .eq('id', o.id)
+                    .eq('status', '待付款')
+                    .select()
+                    .single();
+
+                if (!error && data) {
+                    const idx = state.orders.findIndex(ord => ord.id === o.id);
+                    if (idx !== -1) state.orders[idx] = orderRowToObj(data);
+                    anyUpdated = true;
+                }
+            }
+            return anyUpdated;
+        }
+
+        let currentPaymentOrderId = null;
+
+        async function submitBookingOrder() {
             const type = document.getElementById('booking-service-type').value;
             const fest = document.getElementById('booking-festival').value;
             const ancestorName = document.getElementById('booking-ancestor-name').value.trim();
@@ -3255,12 +3411,102 @@
                 });
             }
 
-            pendingBookingSubmission = {
-                fest, ancestorName, date, offerers, note, paymentMethod,
-                serviceTypeLabel, listOfferings, finalCost
-            };
+            const newOrderId = `ORD-${date.replace(/-/g, '')}-${String(Date.now()).slice(-2)}`;
 
-            openPaymentSimModal(paymentMethod, finalCost);
+            // A 超商代碼 code is generated once, right here, and persisted with the order —
+            // it must never change on subsequent views of the same order.
+            const storeCode = paymentMethod === '超商代碼' ? generateSimStoreCode() : null;
+
+            // Order record is created immediately as "待付款" (unpaid) so it survives even if the
+            // customer never completes payment — it can be resumed from the Orders tab for 3 hours.
+            const { data, error } = await sb
+                .from('orders')
+                .insert({
+                    id: newOrderId,
+                    user_id: state.user.id,
+                    service_type: serviceTypeLabel,
+                    festival_name: state.bookingForm.festivalName ? fest : null,
+                    customer_name: state.user.fullname || state.user.nickname,
+                    customer_phone: state.user.phone,
+                    customer_email: state.user.email,
+                    ancestor_name: ancestorName,
+                    offerers: offerers,
+                    date: date,
+                    offerings: listOfferings,
+                    payment_method: paymentMethod,
+                    store_code: storeCode,
+                    note: note || '陽上子孫虔心敬拜',
+                    status: '待付款',
+                    stage: 0,
+                    total_cost: finalCost,
+                    media_report: null
+                })
+                .select()
+                .single();
+
+            if (error) {
+                showToast(`預約送出失敗：${error.message}`, "error");
+                return;
+            }
+
+            state.orders.unshift(orderRowToObj(data));
+
+            state.bookingForm.date = "";
+            state.bookingForm.note = "";
+            state.bookingForm.offerings = {};
+            state.bookingForm.offerers = [""];
+            state.bookingForm.paymentMethod = "";
+            document.getElementById('booking-date').value = '';
+            document.getElementById('booking-ancestor-name').value = '';
+            document.getElementById('booking-note').value = '';
+            document.getElementById('booking-payment-method').value = '';
+            document.getElementById('note-char-count').textContent = "0 / 60";
+            document.getElementById('booking-ancestor-select').value = '';
+            document.getElementById('booking-ancestor-name').readOnly = false;
+            document.getElementById('booking-ancestor-name').className = "w-full text-xs p-3 rounded-lg border border-brand-100 focus:ring-1 focus:ring-brand-500 outline-none bg-white";
+            renderAllOfferings();
+
+            switchTab('orders');
+            filterOrders('待付款');
+            openPaymentSimModal(paymentMethod, finalCost, newOrderId, storeCode);
+        }
+
+        async function cancelUnpaidOrder(orderId) {
+            const o = state.orders.find(ord => ord.id === orderId);
+            if (!o || o.status !== '待付款') return;
+
+            const confirmed = confirm(`確定要取消委託單號 ${o.id} 嗎？此筆委託尚未付款，取消後不會產生任何費用。`);
+            if (!confirmed) return;
+
+            const { data, error } = await sb
+                .from('orders')
+                .update({ status: '已取消', cancel_reason: '客戶主動取消委託（尚未付款，無需退款）' })
+                .eq('id', orderId)
+                .select()
+                .single();
+
+            if (error) {
+                showToast(`取消失敗：${error.message}`, "error");
+                return;
+            }
+
+            const idx = state.orders.findIndex(ord => ord.id === orderId);
+            if (idx !== -1) state.orders[idx] = orderRowToObj(data);
+            showToast(`委託單號 ${orderId} 已取消。`, "info");
+            renderOrdersList();
+        }
+
+        function resumePaymentForOrder(orderId) {
+            const o = state.orders.find(ord => ord.id === orderId);
+            if (!o || o.status !== '待付款') return;
+
+            const deadline = o.createdAt ? new Date(o.createdAt).getTime() + 3 * 60 * 60 * 1000 : 0;
+            if (Date.now() > deadline) {
+                showToast("此筆委託的付款保留時效已過，視為未成立，請重新填寫預約表單送出新的委託。", "error");
+                return;
+            }
+
+            openPaymentSimModal(o.paymentMethod, o.totalCost, o.id, o.storeCode);
         }
 
         function generateSimStoreCode() {
@@ -3274,7 +3520,8 @@
             input.value = digits.match(/.{1,4}/g)?.join(' ') || digits;
         }
 
-        function openPaymentSimModal(paymentMethod, amount) {
+        function openPaymentSimModal(paymentMethod, amount, orderId, storeCode) {
+            currentPaymentOrderId = orderId;
             document.getElementById('payment-sim-amount').textContent = `NT$ ${amount.toLocaleString()}`;
 
             const body = document.getElementById('payment-sim-body');
@@ -3321,7 +3568,7 @@
                     <div class="text-center space-y-3">
                         <div class="bg-stone-50 border border-dashed border-stone-300 rounded-xl p-4">
                             <span class="text-[10px] text-stone-500 block mb-1">超商繳費代碼</span>
-                            <span class="font-mono text-lg font-bold tracking-widest text-brand-800">${generateSimStoreCode()}</span>
+                            <span class="font-mono text-lg font-bold tracking-widest text-brand-800">${storeCode || '--'}</span>
                         </div>
                         <p class="text-xs text-stone-600">請於 3 日內攜帶代碼至 7-ELEVEN、全家、萊爾富或 OK 超商繳費機台完成付款</p>
                         <p class="text-[9px] text-stone-400 italic">＊本頁僅為模擬展示付款流程，代碼僅供展示。</p>
@@ -3339,12 +3586,15 @@
         }
 
         function cancelSimulatedPayment() {
-            pendingBookingSubmission = null;
+            // The order record already exists in Supabase as "待付款" — cancelling the modal
+            // just closes it. The customer can resume payment later from the Orders tab.
+            currentPaymentOrderId = null;
             document.getElementById('payment-sim-modal').classList.add('hidden');
         }
 
         async function confirmSimulatedPayment() {
-            if (!pendingBookingSubmission) return;
+            if (!currentPaymentOrderId) return;
+            const orderId = currentPaymentOrderId;
 
             document.getElementById('payment-sim-body').classList.add('hidden');
             document.getElementById('payment-sim-actions').classList.add('hidden');
@@ -3352,30 +3602,12 @@
             document.getElementById('payment-sim-processing').classList.remove('hidden');
 
             setTimeout(async () => {
-                const { fest, ancestorName, date, offerers, note, paymentMethod, serviceTypeLabel, listOfferings, finalCost } = pendingBookingSubmission;
-                const newOrderId = `ORD-${date.replace(/-/g, '')}-${String(Date.now()).slice(-2)}`;
-
+                // Stage 1 (委託受理建檔) auto-confirms the moment payment succeeds, so the
+                // order moves straight to stage 2 (等待管理員確認接收).
                 const { data, error } = await sb
                     .from('orders')
-                    .insert({
-                        id: newOrderId,
-                        user_id: state.user.id,
-                        service_type: serviceTypeLabel,
-                        festival_name: state.bookingForm.festivalName ? fest : null,
-                        customer_name: state.user.fullname || state.user.nickname,
-                        customer_phone: state.user.phone,
-                        customer_email: state.user.email,
-                        ancestor_name: ancestorName,
-                        offerers: offerers,
-                        date: date,
-                        offerings: listOfferings,
-                        payment_method: paymentMethod,
-                        note: note || '陽上子孫虔心敬拜',
-                        status: '安排中',
-                        stage: 1,
-                        total_cost: finalCost,
-                        media_report: null
-                    })
+                    .update({ status: '安排中', stage: 2 })
+                    .eq('id', orderId)
                     .select()
                     .single();
 
@@ -3384,36 +3616,21 @@
                     document.getElementById('payment-sim-body').classList.remove('hidden');
                     document.getElementById('payment-sim-actions').classList.remove('hidden');
                     document.getElementById('payment-sim-close-btn').classList.remove('hidden');
-                    showToast(`預約送出失敗：${error.message}`, "error");
+                    showToast(`付款確認失敗：${error.message}`, "error");
                     return;
                 }
 
-                state.orders.unshift(orderRowToObj(data));
-                pendingBookingSubmission = null;
+                const idx = state.orders.findIndex(o => o.id === orderId);
+                if (idx !== -1) state.orders[idx] = orderRowToObj(data);
+                currentPaymentOrderId = null;
 
                 document.getElementById('payment-sim-processing').classList.add('hidden');
                 document.getElementById('payment-sim-success').classList.remove('hidden');
 
                 setTimeout(() => {
                     document.getElementById('payment-sim-modal').classList.add('hidden');
-                    showToast(`恭喜您，委託單號 ${newOrderId} 預約成功！代祭專員將虔心為您整備辦理。`, "success");
-
-                    state.bookingForm.date = "";
-                    state.bookingForm.note = "";
-                    state.bookingForm.offerings = {};
-                    state.bookingForm.offerers = [""];
-                    state.bookingForm.paymentMethod = "";
-                    document.getElementById('booking-date').value = '';
-                    document.getElementById('booking-ancestor-name').value = '';
-                    document.getElementById('booking-note').value = '';
-                    document.getElementById('booking-payment-method').value = '';
-                    document.getElementById('note-char-count').textContent = "0 / 60";
-                    document.getElementById('booking-ancestor-select').value = '';
-                    document.getElementById('booking-ancestor-name').readOnly = false;
-                    document.getElementById('booking-ancestor-name').className = "w-full text-xs p-3 rounded-lg border border-brand-100 focus:ring-1 focus:ring-brand-500 outline-none bg-white";
-
-                    renderAllOfferings();
-                    switchTab('orders');
+                    showToast(`恭喜您，委託單號 ${orderId} 已完成付款，正式成立！代祭專員將虔心為您整備辦理。`, "success");
+                    filterOrders('安排中');
                 }, 1200);
             }, 1400);
         }
@@ -3423,7 +3640,7 @@
             if (!list) return;
             list.innerHTML = '';
 
-            const userOrders = state.orders;
+            const userOrders = state.orders.filter(o => o.status !== '待付款' && o.status !== '已取消');
             if (userOrders.length === 0) {
                 list.innerHTML = `<p class="text-xs text-stone-400 italic text-center py-6">您目前尚無任何歷史代祭拜紀錄。</p>`;
                 document.getElementById('import-order-modal').classList.remove('hidden');
@@ -4069,12 +4286,13 @@
 
         function setAdminFilter(f) {
             currentAdminFilter = f;
-            ['all', 'pending', 'completed'].forEach(id => {
+            ['all', 'pending', 'completed', 'cancelled'].forEach(id => {
                 const btn = document.getElementById(`admin-filter-${id}`);
                 if (btn) {
                     if (id === 'all' && f === '全部') btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-700 text-white transition";
                     else if (id === 'pending' && f === '安排中') btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-700 text-white transition";
                     else if (id === 'completed' && f === '圓滿結束') btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-700 text-white transition";
+                    else if (id === 'cancelled' && f === '已取消') btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-700 text-white transition";
                     else btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium text-stone-600 hover:bg-stone-100 transition";
                 }
             });
@@ -4082,21 +4300,34 @@
         }
 
         function renderAdminDashboard() {
-            const total = state.orders.length;
+            // Unpaid ("待付款") orders are not yet established commitments — the admin
+            // dashboard never surfaces them, in counts or in the order table below.
+            const visibleOrders = state.orders.filter(o => o.status !== '待付款');
+            const total = visibleOrders.length;
             let revenue = 0;
             let pendingCount = 0;
             let completedCount = 0;
+            let cancelledCount = 0;
 
-            state.orders.forEach(o => {
-                revenue += o.totalCost;
-                if (o.status === '安排中') pendingCount++;
-                else completedCount++;
+            visibleOrders.forEach(o => {
+                if (o.status === '安排中') {
+                    pendingCount++;
+                    revenue += o.totalCost;
+                } else if (o.status === '圓滿結束') {
+                    completedCount++;
+                    revenue += o.totalCost;
+                } else if (o.status === '已取消') {
+                    cancelledCount++;
+                    // Cancelled orders are fully refunded, so they don't count towards revenue.
+                }
             });
 
             document.getElementById('admin-stat-total-count').textContent = total;
             document.getElementById('admin-stat-total-revenue').textContent = revenue.toLocaleString();
             document.getElementById('admin-stat-pending-count').textContent = pendingCount;
             document.getElementById('admin-stat-completed-count').textContent = completedCount;
+            const cancelledStat = document.getElementById('admin-stat-cancelled-count');
+            if (cancelledStat) cancelledStat.textContent = cancelledCount;
 
             renderAdminOrders();
         }
@@ -4107,8 +4338,9 @@
             body.innerHTML = '';
 
             const search = document.getElementById('admin-search-input').value.toLowerCase().trim();
-            
+
             const filtered = state.orders.filter(o => {
+                if (o.status === '待付款') return false;
                 if (currentAdminFilter !== '全部' && o.status !== currentAdminFilter) {
                     return false;
                 }
@@ -4139,9 +4371,14 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-stone-50/50 transition border-b border-stone-100";
 
-                const badge = o.status === '安排中' ?
-                    '<span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-bold">安排中</span>' :
-                    '<span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">已圓滿</span>';
+                let badge;
+                if (o.status === '安排中') {
+                    badge = '<span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-bold">安排中</span>';
+                } else if (o.status === '已取消') {
+                    badge = '<span class="bg-stone-200 text-stone-700 text-[10px] px-2 py-0.5 rounded-full font-bold">已取消</span>';
+                } else {
+                    badge = '<span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">已圓滿</span>';
+                }
 
                 tr.innerHTML = `
                     <td class="p-4 font-mono font-bold text-stone-600">${o.id}</td>
@@ -4166,11 +4403,11 @@
                         <button onclick="openAdminUploadModal('${o.id}')" class="bg-amber-500 hover:bg-amber-600 text-brand-950 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">
                             <i class="fa-solid fa-cloud-arrow-up"></i> 影音上傳
                         </button>
-                        ` : `
+                        ` : o.status === '圓滿結束' ? `
                         <button onclick="openAdminUploadModal('${o.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">
                             <i class="fa-solid fa-pen-to-square"></i> 編輯影音
                         </button>
-                        `}
+                        ` : ''}
                     </td>
                 `;
                 body.appendChild(tr);
@@ -4189,6 +4426,13 @@
             document.getElementById('adm-det-date').textContent = o.date;
             document.getElementById('adm-det-payment-method').textContent = o.paymentMethod || '未提供';
             document.getElementById('adm-det-status').textContent = o.status;
+            const cancelReasonRow = document.getElementById('adm-det-cancel-reason-row');
+            if (o.status === '已取消' && o.cancelReason) {
+                cancelReasonRow.classList.remove('hidden');
+                document.getElementById('adm-det-cancel-reason').textContent = o.cancelReason;
+            } else {
+                cancelReasonRow.classList.add('hidden');
+            }
             document.getElementById('adm-det-customer-name').textContent = o.customerName || '--';
             document.getElementById('adm-det-customer-phone').textContent = o.customerPhone || '--';
             document.getElementById('adm-det-customer-email').textContent = o.customerEmail || '--';
@@ -4261,8 +4505,10 @@
 
             const actionBtn = document.getElementById('adm-det-btn-toggle');
             const uploadBtn = document.getElementById('adm-det-btn-open-upload');
+            const cancelBtn = document.getElementById('adm-det-btn-cancel-order');
 
             if (o.status === '安排中') {
+                actionBtn.classList.remove('hidden');
                 actionBtn.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> 手動標記圓滿';
                 actionBtn.onclick = () => changeOrderStatus(o.id, '圓滿結束');
                 actionBtn.className = "flex-1 sm:flex-initial bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-4 py-2 rounded-lg transition font-semibold shadow-xs";
@@ -4271,14 +4517,61 @@
                     closeAdminOrderDetailModal();
                     openAdminUploadModal(o.id);
                 };
-            } else {
+                cancelBtn.classList.remove('hidden');
+                cancelBtn.onclick = () => cancelOrderByAdmin(o.id);
+            } else if (o.status === '圓滿結束') {
+                actionBtn.classList.remove('hidden');
                 actionBtn.innerHTML = '<i class="fa-solid fa-clock-rotate-left mr-1"></i> 退回安排中';
                 actionBtn.onclick = () => changeOrderStatus(o.id, '安排中');
                 actionBtn.className = "flex-1 sm:flex-initial bg-amber-700 hover:bg-amber-800 text-white text-xs px-4 py-2 rounded-lg transition font-semibold shadow-xs";
+                uploadBtn.classList.remove('hidden');
+                uploadBtn.onclick = () => {
+                    closeAdminOrderDetailModal();
+                    openAdminUploadModal(o.id);
+                };
+                cancelBtn.classList.add('hidden');
+            } else {
+                // 已取消 — no further status changes available from here.
+                actionBtn.classList.add('hidden');
                 uploadBtn.classList.add('hidden');
+                cancelBtn.classList.add('hidden');
             }
 
             document.getElementById('admin-detail-modal').classList.remove('hidden');
+        }
+
+        async function cancelOrderByAdmin(orderId) {
+            const o = state.orders.find(ord => ord.id === orderId);
+            if (!o || o.status !== '安排中') return;
+
+            const reason = prompt(`請輸入取消委託單號 ${o.id} 的理由（將顯示給客戶）：`);
+            if (reason === null) return;
+            if (!reason.trim()) {
+                showToast("必須填寫取消理由，才能取消此筆委託。", "error");
+                return;
+            }
+
+            const confirmed = confirm(`確定要取消委託單號 ${o.id} 嗎？此動作將標記為管理員取消並全額退款，客戶端將可查看取消原因。`);
+            if (!confirmed) return;
+
+            const { data, error } = await sb
+                .from('orders')
+                .update({ status: '已取消', cancel_reason: reason.trim() })
+                .eq('id', orderId)
+                .select()
+                .single();
+
+            if (error) {
+                showToast(`取消失敗：${error.message}`, "error");
+                return;
+            }
+
+            const idx = state.orders.findIndex(ord => ord.id === orderId);
+            if (idx !== -1) state.orders[idx] = orderRowToObj(data);
+
+            showToast(`委託單號 ${orderId} 已取消，已通知客戶端全額退款。`, "success");
+            closeAdminOrderDetailModal();
+            renderAdminDashboard();
         }
 
         function closeAdminOrderDetailModal() {
