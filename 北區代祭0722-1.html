@@ -1075,6 +1075,14 @@
                     <label class="font-bold text-stone-700">聯絡電話 <span class="text-red-500">*</span></label>
                     <input type="text" id="reg-phone" placeholder="例如：0912-345-678" class="w-full p-2.5 rounded-xl border border-brand-100 focus:ring-1 focus:ring-brand-500 outline-none bg-white font-mono">
                 </div>
+                <div class="flex items-start space-x-2 pt-1">
+                    <input type="checkbox" id="reg-terms-agree" disabled title="請先點擊查看服務條款" class="mt-0.5 w-3.5 h-3.5 accent-brand-700 cursor-pointer shrink-0 disabled:cursor-not-allowed">
+                    <label for="reg-terms-agree" class="text-[11px] text-stone-600 leading-relaxed">
+                        我已閱讀並同意
+                        <button type="button" onclick="openTermsModal()" class="text-brand-700 font-bold underline hover:text-brand-900">《服務條款》</button>
+                        <span class="text-red-500">*</span>
+                    </label>
+                </div>
             </div>
 
             <button id="auth-btn-login" onclick="submitLogin()" class="w-full bg-brand-700 hover:bg-brand-800 text-white py-3 rounded-xl text-xs font-bold transition shadow">
@@ -1875,11 +1883,10 @@
                 const value = state.siteContent[key];
                 if (!el || value === undefined || value === null || value === '') return;
 
-                if (key === 'hero_title') {
-                    el.innerHTML = value.split('\n').map(escapeHtml).join('<br class="hidden sm:inline">');
-                } else {
-                    el.textContent = value;
-                }
+                // Every field is edited via a <textarea> in admin, so Enter/line breaks should
+                // show up on the actual lobby page for all of them, not just the hero title.
+                const brTag = key === 'hero_title' ? '<br class="hidden sm:inline">' : '<br>';
+                el.innerHTML = value.split('\n').map(escapeHtml).join(brTag);
             });
             renderLobbyVideo();
         }
@@ -2216,6 +2223,9 @@
             }
         }
 
+        // Booking-flow tabs are customer-only — admins manage everything from the 管理後台 instead.
+        const CUSTOMER_ONLY_TABS = ['booking', 'ancestors', 'orders'];
+
         function switchTab(tabId) {
             const authRestrictedTabs = ['booking', 'ancestors', 'orders', 'profile', 'admin'];
             if (authRestrictedTabs.includes(tabId) && !state.isLoggedIn) {
@@ -2233,16 +2243,27 @@
                 return;
             }
 
+            if (CUSTOMER_ONLY_TABS.includes(tabId) && state.user && state.user.isAdmin) {
+                showToast("管理員帳號無需使用此客戶端頁面！", "error");
+                switchTab('admin');
+                return;
+            }
+
             ['lobby', 'booking', 'ancestors', 'orders', 'profile', 'admin'].forEach(id => {
                 const block = document.getElementById(`tab-content-${id}`);
                 if (block) block.classList.add('hidden');
-                
+
                 const nav = document.getElementById(`nav-${id}`);
                 if (nav) {
                     if (id === 'admin') {
                         nav.className = "hidden px-4 py-2 rounded-xl text-sm font-medium transition duration-200 text-stone-600 hover:text-brand-700 hover:bg-brand-50/50";
                         if (state.user && state.user.isAdmin) {
                             nav.classList.remove('hidden');
+                        }
+                    } else if (CUSTOMER_ONLY_TABS.includes(id)) {
+                        nav.className = "px-4 py-2 rounded-xl text-sm font-medium transition duration-200 text-stone-600 hover:text-brand-700 hover:bg-brand-50/50";
+                        if (state.user && state.user.isAdmin) {
+                            nav.classList.add('hidden');
                         }
                     } else {
                         nav.className = "px-4 py-2 rounded-xl text-sm font-medium transition duration-200 text-stone-600 hover:text-brand-700 hover:bg-brand-50/50";
@@ -2254,6 +2275,11 @@
                         mob.className = "hidden flex flex-col items-center justify-center text-stone-400 transition space-y-0.5";
                         if (state.user && state.user.isAdmin) {
                             mob.classList.remove('hidden');
+                        }
+                    } else if (CUSTOMER_ONLY_TABS.includes(id)) {
+                        mob.className = "flex flex-col items-center justify-center text-stone-400 transition space-y-0.5";
+                        if (state.user && state.user.isAdmin) {
+                            mob.classList.add('hidden');
                         }
                     } else {
                         mob.className = "flex flex-col items-center justify-center text-stone-400 transition space-y-0.5";
@@ -3778,6 +3804,19 @@
                 document.getElementById('nav-admin').classList.add('hidden');
                 document.getElementById('mob-admin').classList.add('hidden');
             }
+
+            // Admins have no use for the customer-facing booking flow — hide those nav entries.
+            CUSTOMER_ONLY_TABS.forEach(id => {
+                const nav = document.getElementById(`nav-${id}`);
+                const mob = document.getElementById(`mob-${id}`);
+                if (user.isAdmin) {
+                    if (nav) nav.classList.add('hidden');
+                    if (mob) mob.classList.add('hidden');
+                } else {
+                    if (nav) nav.classList.remove('hidden');
+                    if (mob) mob.classList.remove('hidden');
+                }
+            });
         }
 
         async function submitLogin() {
@@ -3826,6 +3865,12 @@
 
             if (!email || !pass || !passConf || !fullname || !nickname || !phone) {
                 showToast("請填寫所有必填欄位！", "error");
+                return;
+            }
+
+            const termsAgreed = document.getElementById('reg-terms-agree').checked;
+            if (!termsAgreed) {
+                showToast("請先點擊查看《服務條款》，並勾選同意後才能完成註冊！", "error");
                 return;
             }
 
@@ -3951,8 +3996,37 @@
                 showToast("聯絡電話變更成功。", "success");
             }
 
+            await syncOrderCustomerInfo();
+
             showToast("安全動態驗證碼核實無誤，已批准此安全性變更！", "success");
             closeVerifyModal();
+        }
+
+        // Order rows snapshot the customer's name/phone/email at booking time — whenever the
+        // account's profile info changes, push the fresh values onto every existing order too,
+        // so an admin looking at an old order always sees up-to-date contact details.
+        async function syncOrderCustomerInfo() {
+            if (!state.user) return;
+
+            const customerName = state.user.fullname || state.user.nickname;
+            const { error } = await sb.rpc('sync_order_customer_info', {
+                p_customer_name: customerName,
+                p_customer_phone: state.user.phone,
+                p_customer_email: state.user.email
+            });
+
+            if (error) {
+                showToast(`同步既有訂單聯絡資訊失敗：${error.message}`, "error");
+                return;
+            }
+
+            state.orders.forEach(o => {
+                o.customerName = customerName;
+                o.customerPhone = state.user.phone;
+                o.customerEmail = state.user.email;
+            });
+            renderOrdersList();
+            if (state.user.isAdmin) renderAdminDashboard();
         }
 
         function loadProfileFields() {
@@ -3984,6 +4058,8 @@
 
             document.getElementById('user-avatar-char').textContent = full.charAt(0);
             document.getElementById('user-display-nickname').textContent = nick;
+
+            await syncOrderCustomerInfo();
 
             showToast("個人資料基本變更儲存完畢！", "success");
         }
@@ -5335,6 +5411,13 @@
 
         function openTermsModal() {
             document.getElementById('terms-modal').classList.remove('hidden');
+
+            // Viewing the terms unlocks the registration checkbox — it can't be checked blind.
+            const agreeCheckbox = document.getElementById('reg-terms-agree');
+            if (agreeCheckbox) {
+                agreeCheckbox.disabled = false;
+                agreeCheckbox.title = '';
+            }
         }
 
         function closeTermsModal() {
