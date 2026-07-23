@@ -1037,11 +1037,11 @@
             <div id="auth-login-fields" class="space-y-3 text-xs">
                 <div class="space-y-1">
                     <label class="font-bold text-stone-700">登入帳號 (或電子信箱)</label>
-                    <input type="text" id="login-email" placeholder="請輸入您的 Email 或管理員帳號" class="w-full p-3 rounded-xl border border-brand-100 focus:ring-1 focus:ring-brand-500 outline-none bg-white">
+                    <input type="text" id="login-email" placeholder="請輸入您的 Email 或管理員帳號" onkeydown="if(event.key === 'Enter') submitLogin()" class="w-full p-3 rounded-xl border border-brand-100 focus:ring-1 focus:ring-brand-500 outline-none bg-white">
                 </div>
                 <div class="space-y-1">
                     <label class="font-bold text-stone-700">密碼</label>
-                    <input type="password" id="login-password" placeholder="請輸入登入密碼" class="w-full p-3 rounded-xl border border-brand-100 focus:ring-1 focus:ring-brand-500 outline-none bg-white font-mono">
+                    <input type="password" id="login-password" placeholder="請輸入登入密碼" onkeydown="if(event.key === 'Enter') submitLogin()" class="w-full p-3 rounded-xl border border-brand-100 focus:ring-1 focus:ring-brand-500 outline-none bg-white font-mono">
                 </div>
             </div>
 
@@ -2584,6 +2584,9 @@
                         <div class="pt-4 border-t border-red-100 flex items-center justify-between mt-4 gap-2">
                             <span class="text-xs font-bold text-brand-800 font-mono">NT$ ${o.totalCost.toLocaleString()}</span>
                             <div class="flex items-center gap-2">
+                                <button onclick="openReportModal('${o.id}')" class="bg-white hover:bg-stone-50 border border-stone-300 text-stone-700 text-xs px-3 py-2 rounded-xl font-bold transition">
+                                    詳細資訊
+                                </button>
                                 <button onclick="cancelUnpaidOrder('${o.id}')" class="bg-stone-200 hover:bg-stone-300 text-stone-700 text-xs px-3 py-2 rounded-xl font-bold transition">
                                     取消訂單
                                 </button>
